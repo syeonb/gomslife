@@ -28,7 +28,7 @@ document.body.appendChild( renderer.domElement );
 
 // adding sprite render
 
-let gomTexture = new THREE.TextureLoader().load('../assets/gom.png');
+let gomTexture = new THREE.TextureLoader().load("assets/gom.png");
 gomTexture.magFilter = THREE.NearestFilter;
 let gomMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: gomTexture, side: THREE.DoubleSide});
 const gomGeometry = new THREE.PlaneGeometry(1.2, 1.2);
