@@ -39,7 +39,7 @@ camera.position.z = 5;
 
 function animate() {
     gom.position.set(gomPosition.x, gomPosition.y);
-    console.log(gom.position);
+    // console.log(gom.position);
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 };
