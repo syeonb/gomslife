@@ -29,18 +29,18 @@ document.body.appendChild( renderer.domElement );
 // adding sprite render
 
 let gomTexture = new THREE.TextureLoader().load('../assets/gom.png');
-// gomTexture.wrapS = gomTexture.wrapT = THREE.RepeatWrapping;
-let gomMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: gomTexture, side: THREE.DoubleSide });
-const gomGeometry = new THREE.PlaneGeometry(1, 1);
+gomTexture.magFilter = THREE.NearestFilter;
+let gomMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: gomTexture, side: THREE.DoubleSide});
+const gomGeometry = new THREE.PlaneGeometry(1.2, 1.2);
 const gom = new THREE.Mesh( gomGeometry, gomMaterial);
 scene.add(gom);
 
 camera.position.z = 5;
 
 function animate() {
-    requestAnimationFrame( animate );
     gom.position.set(gomPosition.x, gomPosition.y);
     console.log(gom.position);
+    requestAnimationFrame( animate );
     renderer.render( scene, camera );
 };
 

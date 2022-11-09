@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "gh-pages": "^4.0.0",
     "three": "^0.146.0"
-  }
+  },
+  "scripts": {
+    "start": "five-server . -p 8000",
+    "deploy": "gh-pages -d ."
+  },
+  "homepage": "https://{syeonb}.github.io/gomslife"
 }
