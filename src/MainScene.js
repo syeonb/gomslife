@@ -9,38 +9,51 @@ movingUpDownLeftRight = 0;
 let currentTime = 0;
 let clock = new THREE.Clock();
 
+function flipSpriteToOriginal() {
+    if (isFlippedSprite) {
+        gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+        isFlippedSprite = false;
+    }
+}
+
+function flipSpriteToFlipped() {
+    if (!isFlippedSprite) {
+        gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+        isFlippedSprite = true;
+    }
+}
+
 document.addEventListener("keydown", function(event) {
     if (event.key === "w" || event.key === "W") {
-        movingUpDownLeftRight = 1;
-        if (isFlippedSprite) {
-            gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-            isFlippedSprite = false;
+        if (movingUpDownLeftRight != 1) {
+            SelectSprite(10);
         }
+        movingUpDownLeftRight = 1;
+        flipSpriteToOriginal();
         gomPosition.y += 0.05;
     }
     if (event.key === "a" || event.key === "A") {
-        movingUpDownLeftRight = 3;
-        if (isFlippedSprite) {
-            gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-            isFlippedSprite = false;
+        if (movingUpDownLeftRight != 3) {
+            SelectSprite(15);
         }
+        movingUpDownLeftRight = 3;
+        flipSpriteToOriginal();
         gomPosition.x -= 0.05;
     }
     if (event.key === "d" || event.key === "D") {
-        movingUpDownLeftRight = 4;
-        // console.log("move right");
-        if (!isFlippedSprite) {
-            gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-            isFlippedSprite = true;
+        if (movingUpDownLeftRight != 4) {
+            SelectSprite(15);
         }
+        movingUpDownLeftRight = 4;
+        flipSpriteToFlipped();
         gomPosition.x += 0.05;
     }
     if (event.key === "s" || event.key === "S") {
-        movingUpDownLeftRight = 2;
-        if (isFlippedSprite) {
-            gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-            isFlippedSprite = false;
+        if (movingUpDownLeftRight != 2) {
+            SelectSprite(12);
         }
+        movingUpDownLeftRight = 2;
+        flipSpriteToOriginal()
         gomPosition.y -= 0.05;
     }
 })
@@ -65,7 +78,7 @@ document.body.appendChild( renderer.domElement );
 let gomTexture = new THREE.TextureLoader().load("assets/gom spritesheet.png");
 gomTexture.magFilter = THREE.NearestFilter;
 gomTexture.wrapS = gomTexture.wrapT = THREE.RepeatWrapping; 
-gomTexture.repeat.set( 1/4, 1/4);
+gomTexture.repeat.set(1/4, 1/4);
 SelectSprite(12);
 let gomMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: gomTexture, side: THREE.DoubleSide});
 const gomGeometry = new THREE.PlaneGeometry(2, 2);
@@ -83,13 +96,10 @@ function SelectSprite(index)
     gomTexture.offset.y = y/4;
 }
 
-function animate() {
-    gom.position.set(gomPosition.x, gomPosition.y);
-    let delta = clock.getDelta(); 
+async function ChangeSprite(delta) {
     currentTime -= delta * 1000;
     if (currentTime < 0) {
         if (movingUpDownLeftRight == 2) {
-            // console.log("is moving down");
             SelectSprite(moveDown[spriteIndex]);
             spriteIndex++;
             console.log(spriteIndex);
@@ -111,8 +121,13 @@ function animate() {
                 spriteIndex = 0;
             }
         }
-        currentTime = 500;
+        currentTime = 300;
     }
+}
+
+function animate() {
+    let delta = clock.getDelta(); 
+    ChangeSprite(delta).then(gom.position.set(gomPosition.x, gomPosition.y));
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 };
