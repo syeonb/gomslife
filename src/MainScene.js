@@ -9,38 +9,36 @@ movingUpDownLeftRight = 0;
 let currentTime = 0;
 let clock = new THREE.Clock();
 
+function flipSpriteToOriginal() {
+    if (isFlippedSprite) {
+        gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+        isFlippedSprite = false;
+    }
+}
+
+function flipSpriteToFlipped() {
+
+}
+
 document.addEventListener("keydown", function(event) {
     if (event.key === "w" || event.key === "W") {
         movingUpDownLeftRight = 1;
-        if (isFlippedSprite) {
-            gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-            isFlippedSprite = false;
-        }
+        flipSpriteToOriginal();
         gomPosition.y += 0.05;
     }
     if (event.key === "a" || event.key === "A") {
         movingUpDownLeftRight = 3;
-        if (isFlippedSprite) {
-            gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-            isFlippedSprite = false;
-        }
+        flipSpriteToOriginal();
         gomPosition.x -= 0.05;
     }
     if (event.key === "d" || event.key === "D") {
         movingUpDownLeftRight = 4;
-        // console.log("move right");
-        if (!isFlippedSprite) {
-            gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-            isFlippedSprite = true;
-        }
+        flipSpriteToFlipped();
         gomPosition.x += 0.05;
     }
     if (event.key === "s" || event.key === "S") {
         movingUpDownLeftRight = 2;
-        if (isFlippedSprite) {
-            gom.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
-            isFlippedSprite = false;
-        }
+        flipSpriteToOriginal()
         gomPosition.y -= 0.05;
     }
 })
@@ -83,13 +81,10 @@ function SelectSprite(index)
     gomTexture.offset.y = y/4;
 }
 
-function animate() {
-    gom.position.set(gomPosition.x, gomPosition.y);
-    let delta = clock.getDelta(); 
+function ChangeSprite(delta) {
     currentTime -= delta * 1000;
     if (currentTime < 0) {
         if (movingUpDownLeftRight == 2) {
-            // console.log("is moving down");
             SelectSprite(moveDown[spriteIndex]);
             spriteIndex++;
             console.log(spriteIndex);
@@ -113,6 +108,12 @@ function animate() {
         }
         currentTime = 500;
     }
+}
+
+function animate() {
+    gom.position.set(gomPosition.x, gomPosition.y);
+    let delta = clock.getDelta(); 
+    ChangeSprite(delta);
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 };
