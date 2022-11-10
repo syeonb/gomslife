@@ -1,11 +1,13 @@
 let gomPosition = new THREE.Vector2(0,0);
 
 isFlippedSprite = false;
-gomStride = 0.07;
+gomStride = 0.08;
 moveDown = [12, 13, 12, 14]
 moveUp = [10, 11, 10, 4]
 moveRightLeft = [15, 8, 15, 9]
+laptopAnim = [2, 3, 4, 4, 1, 1, 4, 4, 3, 2]
 spriteIndex = 0;
+laptopSpriteIndex = 0;
 movingUpDownLeftRight = 0;
 fps = gomStride * 3000;
 let currentTime = fps;
@@ -82,10 +84,20 @@ gomTexture.magFilter = THREE.NearestFilter;
 gomTexture.wrapS = gomTexture.wrapT = THREE.RepeatWrapping; 
 gomTexture.repeat.set(1/4, 1/4);
 SelectSprite(12);
-let gomMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: gomTexture, side: THREE.DoubleSide});
-const gomGeometry = new THREE.PlaneGeometry(1, 1);
-const gom = new THREE.Mesh( gomGeometry, gomMaterial);
+let gomMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: gomTexture, side: THREE.DoubleSide, transparent: true});
+const spriteGeometry = new THREE.PlaneGeometry(1, 1);
+const gom = new THREE.Mesh( spriteGeometry, gomMaterial);
 scene.add(gom);
+
+// add laptop
+let laptopTexture = new THREE.TextureLoader().load("assets/laptop spritesheet.png");
+laptopTexture.magFilter = THREE.NearestFilter;
+laptopTexture.wrapS = laptopTexture.wrapT = THREE.RepeatWrapping;
+laptopTexture.repeat.set(1/2, 1/2);
+let laptopMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, map: laptopTexture, side: THREE.DoubleSide});
+const laptop = new THREE.Mesh( spriteGeometry, laptopMaterial);
+laptop.position.z = -0.01
+scene.add(laptop)
 
 camera.position.z = 5;
 
@@ -98,9 +110,24 @@ function SelectSprite(index)
     gomTexture.offset.y = y/4;
 }
 
+function SelectLaptopSprite(index) 
+{
+    let x = index % 2;
+    let y = Math.floor(index / 2); 
+    laptopTexture.offset.x = x/2;
+    laptopTexture.offset.y = y/2;
+}
+
 async function ChangeSprite(delta) {
     currentTime -= delta * 1000;
     if (currentTime < 0) {
+        if (laptopSpriteIndex == laptopAnim.length) {
+            laptopSpriteIndex = 0;
+            console.log("laptop sprite out of bounds");
+        }
+        SelectLaptopSprite(laptopAnim[laptopSpriteIndex]);
+        laptopSpriteIndex++;
+        console.log(laptopSpriteIndex);
         if (movingUpDownLeftRight == 2) {
             SelectSprite(moveDown[spriteIndex]);
             spriteIndex++;
